@@ -64,6 +64,17 @@ if(isset($_POST['submit'])){
 
 	if (is_uploaded_file($_FILES["castPhoto"]["tmp_name"])) {
 		$castArr['castPhotoFile'] = $_FILES["castPhoto"]["tmp_name"];
+		$extension = pathinfo($_FILES["castPhoto"]["name"], PATHINFO_EXTENSION);
+		if(preg_match('/jpg/i', $extension) || preg_match('/jpeg/i', $extension)){
+			$extension = "jpeg";
+		}else if(preg_match('/gif/i', $extension)){
+			$extension = "gif";
+		}else if(preg_match('/png/i', $extension)){
+			$extension = "png";
+		}else{
+			$extension = "no match";
+		}
+		$castArr['castPhotoType'] = $extension;
 	}
 
 	addCast($castArr);
@@ -90,12 +101,14 @@ function addCast($castArr){
 		$stmt = $dbh->prepare("INSERT INTO cast_table (
 														shop_id, name, age, tall,
 														bust, cup, waist, hip,
-														play_id, price_min, price_max, picture
+														play_id, price_min, price_max, 
+														picture, picture_type
 													)
 										 VALUES(
 											:shop_id, :name, :age, :tall,
 											:bust, :cup, :waist, :hip,
-											:play_id, :price_min, :price_max, :picture
+											:play_id, :price_min, :price_max, 
+											:picture, :picture_type
 										)");
 		if(!$stmt){
 			$info = $dbh->errorinfo();
@@ -116,6 +129,7 @@ function addCast($castArr){
 		if(isset($castArr['castPhotoFile'])){
 			$fp = fopen($castArr['castPhotoFile'], 'rb');
 			$stmt->bindValue(':picture', $fp, PDO::PARAM_LOB);
+			$stmt->bindValue(':picture_type', $castArr['castPhotoType'], PDO::PARAM_STR);
 		}else{
 			$stmt->bindValue(':picture', null, PDO::PARAM_STR);
 		}
@@ -132,14 +146,7 @@ function addCast($castArr){
 		var_dump($e->getMessage());
 		exit('挿入できません' . $e->getMessage());
 	}
-	// $sql = "insert into cast_table (shop_id, name, age, tall,
-	// 								bust, cup, waist, hip,
-	// 								play_id, price_min, price_max, picture)
-	// 		values ($castArr[\'shopId\'], $castArr[\'name\'], $castArr[\'age\'], $castArr[\'tall\'],
-	// 				$castArr['bust'], $castArr['cup'], $castArr['waist'], $castArr['hip'],
-	// 				$castArr['play_id'], $castArr['minPrice'], $castArr['maxPrice'])";
 
-	// $stmt = $dbh->query($sql);
 	$dbh = null;
 }
 
