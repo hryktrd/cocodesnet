@@ -79,36 +79,59 @@ function addCast($castArr){
 	$dsn = "mysql:host={$dbhost};port={$dbport};dbname={$dbname}";
 	$username = RDS_USERNAME;
 	$password = RDS_PASSWORD;
-	$dbh = new PDO($dsn, $username, $password);
 
-	$stmt = $dbh->prepare("insert into cast_table (
-													shop_id, name, age, tall,
-													bust, cup, waist, hip,
-													play_id, price_min, price_max, picture)
-												)
-									values(
+	try{
+		$dbh = new PDO($dsn, $username, $password);
+	}catch(PDOException $e){
+		exit('データベースに接続できません' . $e->getMessage());
+	}
+
+	try{
+		$stmt = $dbh->prepare("INSERT INTO cast_table (
+														shop_id, name, age, tall,
+														bust, cup, waist, hip,
+														play_id, price_min, price_max, picture
+													)
+										 VALUES(
 											:shop_id, :name, :age, :tall,
 											:bust, :cup, :waist, :hip,
 											:play_id, :price_min, :price_max, :picture
 										)");
+		if(!$stmt){
+			$info = $dbh->errorinfo();
+			exit($info);
+		}
 
-	$stmt->bindValue(':shop_id', $castArr['shopId'], PDO::PARAM_INT);
-	$stmt->bindValue(':name', $castArr['name'], PDO::PARAM_STR);
-	$stmt->bindValue(':age', $castArr['age'], PDO::PARAM_INT);
-	$stmt->bindValue(':tall', $castArr['tall'], PDO::PARAM_INT);
-	$stmt->bindValue(':bust', $castArr['bust'], PDO::PARAM_INT);
-	$stmt->bindValue(':cup', $castArr['cup'], PDO::PARAM_STR);
-	$stmt->bindValue(':waist', $castArr['waist'], PDO::PARAM_INT);
-	$stmt->bindValue(':hip', $castArr['hip'], PDO::PARAM_INT);
-	$stmt->bindValue(':play_id', $castArr['play_id'], PDO::PARAM_INT);
-	$stmt->bindValue(':price_min', $castArr['minPrice'], PDO::PARAM_INT);
-	$stmt->bindValue(':price_max', $castArr['maxPrice'], PDO::PARAM_INT);
-	$stmt->bindValue(':picture', $castArr['castPhotoFile'], PDO::PARAM_INT);
+		$stmt->bindValue(':shop_id', $castArr['shopId'], PDO::PARAM_INT);
+		$stmt->bindValue(':name', $castArr['name'], PDO::PARAM_STR);
+		$stmt->bindValue(':age', $castArr['age'], PDO::PARAM_INT);
+		$stmt->bindValue(':tall', $castArr['tall'], PDO::PARAM_INT);
+		$stmt->bindValue(':bust', $castArr['bust'], PDO::PARAM_INT);
+		$stmt->bindValue(':cup', $castArr['cup'], PDO::PARAM_STR);
+		$stmt->bindValue(':waist', $castArr['waist'], PDO::PARAM_INT);
+		$stmt->bindValue(':hip', $castArr['hip'], PDO::PARAM_INT);
+		$stmt->bindValue(':play_id', $castArr['play_id'], PDO::PARAM_INT);
+		$stmt->bindValue(':price_min', $castArr['minPrice'], PDO::PARAM_INT);
+		$stmt->bindValue(':price_max', $castArr['maxPrice'], PDO::PARAM_INT);
+		if(isset($castArr['castPhotoFile'])){
+			$fp = fopen($castArr['castPhotoFile'], 'rb');
+			$stmt->bindValue(':picture', $fp, PDO::PARAM_LOB);
+		}else{
+			$stmt->bindValue(':picture', null, PDO::PARAM_STR);
+		}
+		$dbh->beginTransaction();
 
-	$stmt->execute();
+		$stmt->execute();
 
-	var_dump($dbh->errorInfo());
+		$dbh->commit();
 
+		fclose($fp);
+
+		var_dump($dbh->errorInfo());
+	} catch(PDOException $e){
+		var_dump($e->getMessage());
+		exit('挿入できません' . $e->getMessage());
+	}
 	// $sql = "insert into cast_table (shop_id, name, age, tall,
 	// 								bust, cup, waist, hip,
 	// 								play_id, price_min, price_max, picture)
