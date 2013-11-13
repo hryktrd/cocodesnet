@@ -41,6 +41,8 @@ getPlayKindArr($playKindArr);
 
 <input type="hidden" name="shopId" value="<?php echo $shopId; ?>">
 <p><input type="submit" name="submit" value="登録"></p>
+<hr>
+<p><a href="castList.php">登録済みキャスト確認</a></p>
 </form>
 </body>
 </html>
