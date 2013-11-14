@@ -19,17 +19,12 @@ $password = RDS_PASSWORD;
 
 $dbh = new PDO($dsn, $username, $password);
 
-$sql = 'select * from cast_table where shop_id=' . $shopId;
+$sql = 'select * from cast_table join play_kind on cast_table.play_id=play_kind.play_id where shop_id=' . $shopId;
 
 $stmt = $dbh->query($sql);
 
 echo "<table>";
 while($result = $stmt->fetch(PDO::FETCH_ASSOC)){
-	//得意プレイクエリー
-	$sql = 'select kind from play_kind where play_id=' . $result['play_id'];
-	$stmtPlayKind = $dbh->query($sql);
-	$playKindResult = $stmtPlayKind->fetch(PDO::FETCH_ASSOC);
-	$playKindStr = $playKindResult['kind'];
 	echo "<tr>";
 	echo '<td><img src="loadCastPicture.php?cast_id=' . $result['cast_id'] . '" width="300"></td>';
 	echo "<td>";
@@ -39,7 +34,7 @@ while($result = $stmt->fetch(PDO::FETCH_ASSOC)){
 	echo "<p>バスト：" . $result['bust'] . "cm " . $result['cup'] . "カップ</p>";
 	echo "<p>ウエスト：" . $result['waist'] . "</p>";
 	echo "<p>ヒップ：" . $result['hip'] . "</p>";
-	echo "<p>得意プレイ：" . $playKindStr . "</p>";
+	echo "<p>得意プレイ：" . $result['kind'] . "</p>";
 	echo "<p>価格帯：" . $result['price_min'] . "〜" . $result['price_max'] . "</p>";
 	echo "</td>";
 	echo "</tr>";
