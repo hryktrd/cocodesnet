@@ -42,26 +42,45 @@ $dbh = null;
 
 		<div data-role="content">
 			<p>いまいけるキャスト</p>
-			<section class="picture" id="castpicture">
+			<!-- <section class="picture" id="castpicture"> -->
 			<div class="viewport">
 				<div class="flipsnap">
 					<?php
 					foreach($castId as $id){
 						print '<div class="item">';
-						print '<img src="loadCastPicture.php?cast_id=' . $id . '" width="300">';
+						print '<img src="loadCastPicture.php?cast_id=' . $id . '" width="320">';
 						print '</div>';
 					}
 					?>
 				</div>
 			</div>
-			</section>
+			<!-- </section> -->
 
 		</div><!-- /content -->
 
 	</div><!-- /page -->
+<style>
+.viewport {
+    width: 320px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+.flipsnap {
+    width: 3520px; /* 320px(item width) * 3(item count) */
+}
+.item {
+    float: left;
+    width: 320px;
+
+}
+
+.item img {
+    width: 320px;
+}
+</style>
 	<script>
-	window.load(function() {
-		Flipsnap('#castpicture.flipsnap');
+	$(function(){
+		Flipsnap('.flipsnap');
 	});
 
 	</script>
