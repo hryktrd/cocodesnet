@@ -16,8 +16,18 @@ $sql = 'select * from cast_table join play_kind on cast_table.play_id=play_kind.
 
 $stmt = $dbh->query($sql);
 
-while($result = $stmt->fetch(PDO::FETCH_ASSOC)){
-	$castId[] = $result['cast_id'];
+while($result 	= $stmt->fetch(PDO::FETCH_ASSOC)){
+	$castId[] 	= $result['cast_id'];
+	$name[] 	= $result['name'];
+	$age[]		= $result['age'];
+	$tall[]		= $result['tall'];
+	$bust[]		= $result['bust'];
+	$cup[]		= $result['cup'] ;
+	$waist[]	= $result['waist'];
+	$hip[]		= $result['hip'];
+	$playKind[]	= $result['kind'];
+	$priceMin[] = $result['price_min'];
+	$priceMax[] = $result['price_max'];
 }
 
 $dbh = null;
@@ -67,6 +77,29 @@ $dbh = null;
 				?>
 				</ul>
 			</div>
+
+			<div id="profileSlider" class="flexslider">
+				<ul class="slides">
+				<?php
+					for($i=0; $i<count($name); $i++){
+						echo '<li>';
+						echo '<div class="castProfile">';
+						echo "<p>名前：" . $name[$i] . "</p>";
+						echo "<p>年齢：" . $age[$i] . "</p>";
+						echo "<p>身長：" . $tall[$i] . "</p>";
+						echo "<p>バスト：" . $bust[$i] . "cm " . $cup[$i] . "カップ</p>";
+						echo "<p>ウエスト：" . $waist[$i] . "</p>";
+						echo "<p>ヒップ：" . $hip[$i] . "</p>";
+						echo "<p>得意プレイ：" . $playKind[$i] . "</p>";
+						echo "<p>価格帯：" . $priceMin[$i] . "〜" . $priceMax[$i] . "</p>";
+						echo '</div>';
+						echo '</li>';
+					}
+				?>
+				
+				</ul>
+			</div><!-- profileSlider -->
+
 			<!-- </div> -->
 			<!-- </section> -->
 
@@ -84,10 +117,19 @@ $dbh = null;
 				slideshow: false,
 				itemWidth: 60,
 				itemMargin: 5,
-				asNavFor: '#photoSlider',
+				asNavFor: '#photoSlider'
+				
 			});
 			$('#photoSlider').flexslider({
 				animation: "slide",
+				controlNav: false,
+				directionNav: false,
+				animationLoop: false,
+				slideshow: false,
+				sync: '#profileSlider'
+			});
+			$('#profileSlider').flexslider({
+				animation: "fade",
 				controlNav: false,
 				directionNav: false,
 				animationLoop: false,
