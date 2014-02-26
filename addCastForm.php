@@ -1,6 +1,11 @@
 <?php
+session_start();
 require_once('define.php');
-$shopId = 1;
+if(isset($_SESSION['shopId'])){
+$shopId = $_SESSION['shopId'];
+}else{
+	header("Location: shopLogin.php");
+}
 
 //得意なプレイ一覧取得
 getPlayKindArr($playKindArr);

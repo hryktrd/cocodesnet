@@ -12,7 +12,7 @@ $password = RDS_PASSWORD;
 $dbh = new PDO($dsn, $username, $password);
 $dbh->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-$sql = 'select * from cast_table join play_kind on cast_table.play_id=play_kind.play_id where shop_id=' . $shopId;
+$sql = 'select * from cast_table join play_kind, shop_table on cast_table.play_id=play_kind.play_id where cast_table.shop_id=shop_table.shop_id and shop_table.shop_id=1';
 
 $stmt = $dbh->query($sql);
 
@@ -96,7 +96,7 @@ $dbh = null;
 						echo '</li>';
 					}
 				?>
-				
+
 				</ul>
 			</div><!-- profileSlider -->
 
@@ -118,7 +118,7 @@ $dbh = null;
 				itemWidth: 60,
 				itemMargin: 5,
 				asNavFor: '#photoSlider'
-				
+
 			});
 			$('#photoSlider').flexslider({
 				animation: "slide",
