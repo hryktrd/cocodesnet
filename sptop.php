@@ -1,4 +1,5 @@
 <?php
+
 require_once("define.php");
 $shopId = 1;
 $dbhost = RDS_HOSTNAME;
@@ -12,7 +13,9 @@ $password = RDS_PASSWORD;
 $dbh = new PDO($dsn, $username, $password);
 $dbh->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-$sql = 'select * from cast_table join play_kind, shop_table on cast_table.play_id=play_kind.play_id where cast_table.shop_id=shop_table.shop_id and shop_table.shop_id=1';
+$sql = 'select * from cast_table join play_kind on cast_table.play_id=play_kind.play_id
+									join shop_table on cast_table.shop_id=shop_table.shop_id
+									where shop_table.shop_id=1';
 
 $stmt = $dbh->query($sql);
 
@@ -31,6 +34,7 @@ while($result 	= $stmt->fetch(PDO::FETCH_ASSOC)){
 }
 
 $dbh = null;
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -53,6 +57,7 @@ $dbh = null;
 
 		<div data-role="content">
 			<p>いまいけるキャスト</p>
+			<div id="castList"></div>
 			<!-- <section class="picture" id="castpicture"> -->
 			<!-- <div class="viewport"> -->
 			<div id="photoSlider" class="flexslider">
@@ -109,6 +114,17 @@ $dbh = null;
 
 	<script>
 		$(window).load(function() {
+			$.ajax({
+				type: 'POST',
+				url: './listCastByLocation.php',
+				dataType: 'json',
+				success: function(json){
+					var len = json.length;
+					for(var i=0; i < len; i++){
+						$("#castList").append(json[i].version + ' ' + json[i].codename + '<br>');
+					}
+				}
+			});
 			$('#thumbSlider').flexslider({
 				animation: "slide",
 				controlNav: false,

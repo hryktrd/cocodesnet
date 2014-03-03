@@ -12,7 +12,9 @@ $password = RDS_PASSWORD;
 $dbh = new PDO($dsn, $username, $password);
 $dbh->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-$sql = 'select * from cast_table join play_kind on cast_table.play_id=play_kind.play_id where shop_id=' . $shopId;
+$sql = 'select * from cast_table join play_kind on cast_table.play_id=play_kind.play_id
+									join shop_table on cast_table.shop_id=shop_table.shop_id
+									where shop_table.shop_id=' . $shopId;
 
 $stmt = $dbh->query($sql);
 
@@ -33,17 +35,17 @@ while($result 	= $stmt->fetch(PDO::FETCH_ASSOC)){
 $dbh = null;
 
 $jsonArr = array(
-			$castId,
-			$name,
-			$age,
-			$tall,
-			$bust,
-			$cup,
-			$waist,
-			$hip,
-			$playKind,
-			$priceMin,
-			$priceMax
+			'castId' 	=> $castId,
+			'name' 		=>$name,
+			'age' 		=> $age,
+			'tall' 		=> $tall,
+			'bust' 		=> $bust,
+			'cup'		=> $cup,
+			'waist'		=> $waist,
+			'hip'		=> $hip,
+			'playKind'	=> $playKind,
+			'priceMin'	=> $priceMin,
+			'priceMax'	=> $priceMax
 			);
 
 header("Content-Type: application/json; charset=utf-8");
